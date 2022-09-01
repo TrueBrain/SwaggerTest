@@ -1,0 +1,55 @@
+name: Publish docs
+
+on:
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: code
+          
+      - name: Checkout Swagger UI
+        uses: actions/checkout@v3
+        with:
+          repository: swagger-api/swagger-ui
+          ref: v4.14.0
+          path: swagger-ui
+          
+      - name: Create documentation
+        run: |
+          mkdir site
+          cp swagger-ui/dist/* site/
+          cp code/project.yaml site/
+          sed -i 's@https://petstore.swagger.io/v2/swagger.json@project.yaml@' site/swagger-initializer.js
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: 'swagger-ui/dist/'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

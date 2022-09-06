@@ -39,9 +39,10 @@ jobs:
         run: |
           mkdir site
           cp swagger-ui/dist/* site/
-          cp code/download_urls site/
           cp code/project.yaml site/
           sed -i 's@https://petstore.swagger.io/v2/swagger.json@project.yaml@g' site/swagger-initializer.js
+          mkdir site/test
+          cp code/download_urls site/test/index.json
           
       - name: Setup Pages
         uses: actions/configure-pages@v2

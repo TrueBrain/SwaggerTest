@@ -1,0 +1,5 @@
+{
+    "conan_package.tgz": "bbbb",
+    "conaninfo.txt": "cccc",
+    "conanmanifest.txt": "dddd"
+}
